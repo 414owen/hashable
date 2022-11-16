@@ -289,14 +289,12 @@ class Eq a => Hashable a where
 
     default hashWithSalt :: (Generic a, GHashable Zero (Rep a)) => Int -> a -> Int
     hashWithSalt = genericHashWithSalt
-    {-# INLINE hashWithSalt #-}
 
 -- | Generic 'hashWithSalt'.
 --
 -- @since 1.3.0.0
 genericHashWithSalt :: (Generic a, GHashable Zero (Rep a)) => Int -> a -> Int
 genericHashWithSalt = \salt -> ghashWithSalt HashArgs0 salt . from
-{-# INLINE genericHashWithSalt #-}
 
 data Zero
 data One
@@ -315,14 +313,12 @@ class Eq1 t => Hashable1 t where
 
     default liftHashWithSalt :: (Generic1 t, GHashable One (Rep1 t)) => (Int -> a -> Int) -> Int -> t a -> Int
     liftHashWithSalt = genericLiftHashWithSalt
-    {-# INLINE liftHashWithSalt #-}
 
 -- | Generic 'liftHashWithSalt'.
 --
 -- @since 1.3.0.0
 genericLiftHashWithSalt :: (Generic1 t, GHashable One (Rep1 t)) => (Int -> a -> Int) -> Int -> t a -> Int
 genericLiftHashWithSalt = \h salt -> ghashWithSalt (HashArgs1 h) salt . from1
-{-# INLINE genericLiftHashWithSalt #-}
 
 #if LIFTED_FUNCTOR_CLASSES
 class Eq2 t => Hashable2 t where
@@ -377,7 +373,6 @@ hashUsing :: (Hashable b) =>
           -> a                  -- ^ Value to transform.
           -> Int
 hashUsing f salt x = hashWithSalt salt (f x)
-{-# INLINE hashUsing #-}
 
 instance Hashable Int where
     hash = id
@@ -569,7 +564,6 @@ instance Hashable Double where
 -- compilation.
 distinguisher :: Int
 distinguisher = fromIntegral $ (maxBound :: Word) `quot` 3
-{-# INLINE distinguisher #-}
 
 instance Hashable a => Hashable (Maybe a) where
     hash Nothing = 0
@@ -790,7 +784,6 @@ instance Hashable WordPtr where
 instance Hashable Fingerprint where
     hash (Fingerprint x _) = fromIntegral x
     hashWithSalt = defaultHashWithSalt
-    {-# INLINE hash #-}
 
 #if MIN_VERSION_base(4,10,0)
 
@@ -801,18 +794,15 @@ hashTypeRep tr =
 instance Hashable Type.Reflection.SomeTypeRep where
     hash (Type.Reflection.SomeTypeRep r) = hashTypeRep r
     hashWithSalt = defaultHashWithSalt
-    {-# INLINE hash #-}
 
 instance Hashable (Type.Reflection.TypeRep a) where
     hash = hashTypeRep
     hashWithSalt = defaultHashWithSalt
-    {-# INLINE hash #-}
 
 #else
 
 -- | Compute the hash of a TypeRep, in various GHC versions we can do this quickly.
 hashTypeRep :: TypeRep -> Int
-{-# INLINE hashTypeRep #-}
 #if   MIN_VERSION_base(4,8,0)
 -- Fingerprint is just the MD5, so taking any Int from it is fine
 hashTypeRep tr = let Fingerprint x _ = typeRepFingerprint tr in fromIntegral x
@@ -824,7 +814,6 @@ hashTypeRep (TypeRep (Fingerprint x _) _ _) = fromIntegral x
 instance Hashable TypeRep where
     hash = hashTypeRep
     hashWithSalt = defaultHashWithSalt
-    {-# INLINE hash #-}
 
 #endif
 
@@ -848,7 +837,6 @@ hashByteArray :: ByteArray#  -- ^ data to hash
               -> Int         -- ^ length, in bytes
               -> Int         -- ^ hash value
 hashByteArray ba0 off len = hashByteArrayWithSalt ba0 off len defaultSalt
-{-# INLINE hashByteArray #-}
 
 instance Hashable Unique where
     hash = hashUnique
